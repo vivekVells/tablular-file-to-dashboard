@@ -2,24 +2,38 @@ import React, { FC, useState } from 'react';
 import Papa, { ParseResult } from 'papaparse';
 
 const TabularFileToJson: FC = () => {
-	const [jsonData, setjsonData] = useState<{}[]>();
+	const [jsonData, setjsonData] = useState<Array<Object>>();
 
 	const handleUpload = (event: { preventDefault: () => void }) => {
 		event.preventDefault();
 
 		const fileInput: any = document.getElementById('upload-file');
 
-		Papa.parse(fileInput && fileInput.files[0], {
-			complete: function (results: ParseResult<any>) {
-				console.log(results);
+		console.log(`fileInput: ${fileInput.files}`);
+		console.log(fileInput.files);
 
-				setjsonData(results.data);
-			},
-		});
+		if (
+			fileInput &&
+			fileInput.files[0] &&
+			fileInput.files[0].type === 'text/csv'
+		) {
+			Papa.parse(fileInput && fileInput.files[0], {
+				complete: function (results: ParseResult<any>) {
+					console.log(results);
+
+					setjsonData(results.data);
+				},
+			});
+		} else {
+			alert(
+				'file type not supported. only csv files are currently supported for now!'
+			);
+			setjsonData([]);
+		}
 	};
 
 	return (
-		<div>
+		<div style={{ marginTop: '48px' }}>
 			<div>
 				<input
 					type='file'
@@ -28,7 +42,7 @@ const TabularFileToJson: FC = () => {
 					onChange={handleUpload}
 				/>
 			</div>
-			<div style={{ marginTop: '32px' }}>JSONDATA: {jsonData}</div>
+			<div>JSONDATA: {jsonData}</div>
 		</div>
 	);
 };
