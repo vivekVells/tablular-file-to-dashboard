@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Adapter = () => {
+const Adapter: React.FC = () => {
 	return <div>Welcome to File To Dashboard</div>;
 };
 
