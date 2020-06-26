@@ -1,7 +1,12 @@
 import React from 'react';
+import DashboardWorkflow from './dashboard';
 
 const Adapter: React.FC = () => {
-	return <div>Welcome to File To Dashboard</div>;
+	return (
+		<>
+			<DashboardWorkflow />
+		</>
+	);
 };
 
 export default Adapter;
