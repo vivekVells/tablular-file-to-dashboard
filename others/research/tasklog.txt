@@ -1,0 +1,51 @@
+## worked stories:
+
+
+#13
+
+#2
+eslint setup
+- command: npm install -D eslint eslint-config-prettier eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-import
+- installing all eslint related stuffs in dev dependencies
+- stupid eslint error. this took long time to resolve - https://stackoverflow.com/questions/60124662/create-react-app-eslint-error-while-deployment-on-local-machine
+    - used npm install -g npm@latest resolved the issue
+
+typescript setup
+- npm i -D typescript
+- npx tsc --init ==> tsconfig
+- npm install -D @types/react @types/react-dom @types/reach__router
+- npm i -D @typescript-eslint/eslint-plugin @typescript-eslint/parser
+- converted all .js, .jsx to .ts, .tsx
+-
+
+
+#1
+https://www.npmjs.com/package/xlsx
+https://www.npmjs.com/package/csvtojson
+https://www.papaparse.com/demo
+
+
+import React from 'react';
+import Papa from 'papaparse';
+
+const PapaParseTest = () => {
+    const handleUpload = (event) => {
+        event.preventDefault();
+        var fileInput = document.getElementById('upload-file');
+
+        Papa.parse(fileInput.files[0], {
+            complete: function (results) {
+                console.log(results);
+            }
+        });
+    }
+
+    return (
+        <div>
+            PapaParseTest
+            <input type="file" name="upload-file" id="upload-file" onChange={handleUpload} />
+        </div>
+    );
+}
+
+export default PapaParseTest;
