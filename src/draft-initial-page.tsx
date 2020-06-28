@@ -1,14 +1,24 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState } from 'react';
 import Title from 'antd/lib/typography/Title';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import styles from './draft-initial-page.module.scss';
-import { Select, Card } from 'antd';
+import { Select, Card, Button } from 'antd';
 
 /*
 editable title - have to maintain state
 subtitle - single drop down - options from jsonData prop
 contents - multiselect dropdown - options from jsonData prop
 */
+
+interface NextPageFinalJSONDataGroupingItemProp {
+	itemTitle: any;
+	items: any;
+	show: boolean;
+}
+interface NextPageFinalJSONDataGroupingsProp {
+	groupingBy: string;
+	groupingItems: NextPageFinalJSONDataGroupingItemProp[];
+}
 
 interface FinalJSONDataGroupingProp {
 	grouping_identifiers: Array<string>;
@@ -40,10 +50,6 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 	const [finalJSONData, setFinalJSONData] = useState<FinalJSONDataProp>(
 		setInitialFinalJSONData()
 	);
-
-	useEffect(() => {
-		finalJsonDataCallBkFn(finalJSONData);
-	}, [finalJSONData, finalJsonDataCallBkFn]);
 
 	const titleOnChange = (newTitle: string) => {
 		setFinalJSONData({ ...finalJSONData, pageTitle: newTitle });
@@ -117,11 +123,69 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 				size='large'
 				mode='multiple'
 				showSearch
-				style={{ width: 200, paddingLeft: 8 }}
+				style={{ width: 200, paddingLeft: 8, marginBottom: 16 }}
 				onChange={groupingItemsOnChange}
 				options={groupingItemsSelectOptions()}
 				filterOption={true}
 			/>
+		</div>
+	);
+
+	function groupBy(list: any[], keyGetter: (arg0: any) => any) {
+		const map = new Map();
+		list.forEach((item) => {
+			const key = keyGetter(item);
+			const collection = map.get(key);
+			if (!collection) {
+				map.set(key, [item]);
+			} else {
+				collection.push(item);
+			}
+		});
+		return map;
+	}
+
+	const nextPageOnClick = () => {
+		let groupingsArr: NextPageFinalJSONDataGroupingsProp[] = [];
+
+		const generateGroupingsArr = () => {
+			finalJSONData.grouping_identifiers.forEach((groupingIdentifier) => {
+				let currentGroupingItemsArr: NextPageFinalJSONDataGroupingItemProp[] = [];
+
+				let grouped = groupBy(jsonData, (data) => data[groupingIdentifier]);
+
+				grouped.forEach((value: any, key: any) => {
+					currentGroupingItemsArr.push({
+						itemTitle: key,
+						items: value,
+						show: true,
+					});
+				});
+
+				groupingsArr.push({
+					groupingBy: groupingIdentifier,
+					groupingItems: currentGroupingItemsArr,
+				});
+
+				currentGroupingItemsArr = [];
+			});
+
+			return groupingsArr;
+		};
+
+		const nextPageFinalJSONData = {
+			pageTitle: finalJSONData.pageTitle,
+			groupings: generateGroupingsArr(),
+		};
+
+		finalJsonDataCallBkFn(nextPageFinalJSONData);
+	};
+
+	const NextPageElement = (
+		<div style={{ textAlign: 'center' }}>
+			<Button type='primary' shape='round' onClick={nextPageOnClick}>
+				Next Page
+			</Button>
 		</div>
 	);
 
@@ -135,9 +199,11 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 				bordered={true}
 			>
 				{GroupingIdentifiersElement}
+
 				{GroupingItemsElement}
+
+				{NextPageElement}
 			</Card>
-			Final JSON Data: {JSON.stringify(finalJSONData)}
 		</div>
 	);
 };

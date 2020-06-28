@@ -4,7 +4,15 @@ import styles from './dashboard-workflow.module.css';
 import TabularFileToJson from './tabular-file-to-json';
 import DraftInitialPage from './draft-initial-page';
 
-// todo: have to move these to context
+// todo: have to move few state mgmt related stuffs using useContext hook
+
+interface NextPageJSONDataProp {
+	pageTitle: string;
+	groupings: {
+		groupingBy: string;
+		groupingItems: { itemTitle: any; items: any; show: boolean }[];
+	}[];
+}
 
 const DashboardWorkflow: FC = () => {
 	const { Title } = Typography;
@@ -16,7 +24,7 @@ const DashboardWorkflow: FC = () => {
 		setjsonData(data);
 	};
 
-	const finalJsonDataCallBkFn = (data: Array<Object>) => {
+	const finalJsonDataCallBkFn = (data: NextPageJSONDataProp) => {
 		console.log(`finalJsonDataCallBkFn received: ${JSON.stringify(data)}`);
 	};
 
