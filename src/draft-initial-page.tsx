@@ -3,6 +3,7 @@ import Title from 'antd/lib/typography/Title';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import styles from './draft-initial-page.module.scss';
 import { Select, Card, Button } from 'antd';
+import { ReviewJSONDataProp } from './dashboard-workflow';
 
 /*
 editable title - have to maintain state
@@ -10,14 +11,19 @@ subtitle - single drop down - options from jsonData prop
 contents - multiselect dropdown - options from jsonData prop
 */
 
-interface ReviewJSONDataGroupingItemProp {
-	itemTitle: any;
-	items: any;
+export interface ReviewJSONDataGroupingItemProp {
+	itemTitle: string;
+	items: Array<Object>;
 	show: boolean;
 }
-interface ReviewJSONDataGroupingsProp {
+
+export interface ReviewJSONDataGroupingProp {
 	groupingBy: string;
-	groupingItems: ReviewJSONDataGroupingItemProp[];
+	groupingItems: Array<ReviewJSONDataGroupingItemProp>;
+}
+
+export interface ReviewJSONDataGroupingsProp {
+	groupings: Array<ReviewJSONDataGroupingProp>;
 }
 
 interface DraftJSONDataGroupingProp {
@@ -146,17 +152,33 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 	}
 
 	const ReviewOnClick = () => {
-		let groupingsArr: ReviewJSONDataGroupingsProp[] = [];
+		console.log(`draftJSONData: ${JSON.stringify(draftJSONData)}`);
+		let groupingsArr: Array<ReviewJSONDataGroupingProp> = [];
+		let excludeKeys = draftJSONData.groupingItems;
+
+		const excludeKeysInArr = (values: Array<Object>) => {
+			return values.map((value: any) => {
+				excludeKeys.forEach((keyToDelete) => {
+					if (Object.keys(value).includes(keyToDelete)) {
+						delete value[keyToDelete];
+					}
+				});
+				return {
+					...value,
+				};
+			});
+		};
 
 		const generateGroupingsArr = () => {
 			draftJSONData.groupingIdentifiers.forEach((groupingIdentifier) => {
-				let currentGroupingItemsArr: ReviewJSONDataGroupingItemProp[] = [];
+				let currentGroupingItemsArr: Array<ReviewJSONDataGroupingItemProp> = [];
 
 				let grouped = groupBy(jsonData, (data) => data[groupingIdentifier]);
 
-				grouped.forEach((value: any, key: any) => {
+				grouped.forEach((value: Array<Object>, key: any) => {
 					currentGroupingItemsArr.push({
 						itemTitle: key,
+						// itemsByGroupingItems: excludeKeysInArr(value),
 						items: value,
 						show: true,
 					});
@@ -173,7 +195,7 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 			return groupingsArr;
 		};
 
-		const ReviewJSONData = {
+		const ReviewJSONData: ReviewJSONDataProp = {
 			pageTitle: draftJSONData.pageTitle,
 			groupings: generateGroupingsArr(),
 		};

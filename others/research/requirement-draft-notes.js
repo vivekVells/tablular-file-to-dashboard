@@ -140,6 +140,43 @@ nextPageJSONData = {
 
 
 
+First Name: "John"
+Last Name: "Doe"
+
+
+
+
+// for #19, antd table thingy
+const mockColumns = [
+    {
+        title: 'First Name',
+        dataIndex: 'First Name',
+        key: 'first_name',
+    },
+    {
+        title: 'Last Name',
+        dataIndex: 'Last Name',
+        key: 'last_name',
+    },
+];
+
+const mockData = [
+    {
+        key: '1',
+        'First Name': 'John',
+        'Last Name': 'Doe',
+    },
+    {
+        key: '1',
+        'First Name': 'Vivek',
+        'Last Name': 'Vellai',
+    },
+];
+
+<Table columns={mockColumns} dataSource={mockData} />
+
+
+
 
 // for addressess.csv
 // jsonDataHeaderTitle: ["First Name", "Last Name", "Address 1", "City", "State", "Zipcode"]
