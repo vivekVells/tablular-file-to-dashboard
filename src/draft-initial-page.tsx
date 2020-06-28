@@ -10,63 +10,63 @@ subtitle - single drop down - options from jsonData prop
 contents - multiselect dropdown - options from jsonData prop
 */
 
-interface NextPageFinalJSONDataGroupingItemProp {
+interface ReviewJSONDataGroupingItemProp {
 	itemTitle: any;
 	items: any;
 	show: boolean;
 }
-interface NextPageFinalJSONDataGroupingsProp {
+interface ReviewJSONDataGroupingsProp {
 	groupingBy: string;
-	groupingItems: NextPageFinalJSONDataGroupingItemProp[];
+	groupingItems: ReviewJSONDataGroupingItemProp[];
 }
 
-interface FinalJSONDataGroupingProp {
-	grouping_identifiers: Array<string>;
-	grouping_items: Array<string>;
+interface DraftJSONDataGroupingProp {
+	groupingIdentifiers: Array<string>;
+	groupingItems: Array<string>;
 }
 
-interface FinalJSONDataProp extends FinalJSONDataGroupingProp {
+interface DraftJSONDataProp extends DraftJSONDataGroupingProp {
 	pageTitle: string;
 }
 
 interface DraftInitialPageProps {
 	// todo: change this arg type
 	jsonData: Array<Object>;
-	finalJsonDataCallBkFn: Function;
+	reviewJsonDataCallBkFn: Function;
 }
 
 const DraftInitialPage: FC<DraftInitialPageProps> = ({
 	jsonData,
-	finalJsonDataCallBkFn,
+	reviewJsonDataCallBkFn,
 }) => {
-	const setInitialFinalJSONData = (): FinalJSONDataProp => {
+	const setInitialFinalJSONData = (): DraftJSONDataProp => {
 		return {
 			pageTitle: Object.keys(jsonData[0])[0],
-			grouping_identifiers: [],
-			grouping_items: [],
+			groupingIdentifiers: [],
+			groupingItems: [],
 		};
 	};
 
-	const [finalJSONData, setFinalJSONData] = useState<FinalJSONDataProp>(
+	const [draftJSONData, setDraftJSONData] = useState<DraftJSONDataProp>(
 		setInitialFinalJSONData()
 	);
 
 	const titleOnChange = (newTitle: string) => {
-		setFinalJSONData({ ...finalJSONData, pageTitle: newTitle });
+		setDraftJSONData({ ...draftJSONData, pageTitle: newTitle });
 	};
 
 	const PageTitleElement = (
 		<div className={styles.pageTitle}>
 			<Title>
 				<Paragraph editable={{ onChange: titleOnChange }}>
-					{finalJSONData.pageTitle}
+					{draftJSONData.pageTitle}
 				</Paragraph>
 			</Title>
 		</div>
 	);
 
 	const groupingIdentifiersOnChange = (values: Array<string>) => {
-		setFinalJSONData({ ...finalJSONData, grouping_identifiers: values });
+		setDraftJSONData({ ...draftJSONData, groupingIdentifiers: values });
 	};
 
 	const groupingIdentifiersSelectOptions = () => {
@@ -99,7 +99,7 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 	);
 
 	const groupingItemsOnChange = (values: Array<string>) => {
-		setFinalJSONData({ ...finalJSONData, grouping_items: values });
+		setDraftJSONData({ ...draftJSONData, groupingItems: values });
 	};
 
 	const groupingItemsSelectOptions = () => {
@@ -145,12 +145,12 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 		return map;
 	}
 
-	const nextPageOnClick = () => {
-		let groupingsArr: NextPageFinalJSONDataGroupingsProp[] = [];
+	const ReviewOnClick = () => {
+		let groupingsArr: ReviewJSONDataGroupingsProp[] = [];
 
 		const generateGroupingsArr = () => {
-			finalJSONData.grouping_identifiers.forEach((groupingIdentifier) => {
-				let currentGroupingItemsArr: NextPageFinalJSONDataGroupingItemProp[] = [];
+			draftJSONData.groupingIdentifiers.forEach((groupingIdentifier) => {
+				let currentGroupingItemsArr: ReviewJSONDataGroupingItemProp[] = [];
 
 				let grouped = groupBy(jsonData, (data) => data[groupingIdentifier]);
 
@@ -173,17 +173,17 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 			return groupingsArr;
 		};
 
-		const nextPageFinalJSONData = {
-			pageTitle: finalJSONData.pageTitle,
+		const ReviewJSONData = {
+			pageTitle: draftJSONData.pageTitle,
 			groupings: generateGroupingsArr(),
 		};
 
-		finalJsonDataCallBkFn(nextPageFinalJSONData);
+		reviewJsonDataCallBkFn(ReviewJSONData);
 	};
 
-	const NextPageElement = (
+	const ReviewElement = (
 		<div style={{ textAlign: 'center' }}>
-			<Button type='primary' shape='round' onClick={nextPageOnClick}>
+			<Button type='primary' shape='round' onClick={ReviewOnClick}>
 				Next Page
 			</Button>
 		</div>
@@ -193,6 +193,7 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 		// todo: not sure why we cannot use draft-initial-page
 		<div className={styles.draftInitialPage}>
 			{PageTitleElement}
+
 			<Card
 				headStyle={{ textAlign: 'center' }}
 				title='Group By Identifiers & its Items'
@@ -202,7 +203,7 @@ const DraftInitialPage: FC<DraftInitialPageProps> = ({
 
 				{GroupingItemsElement}
 
-				{NextPageElement}
+				{ReviewElement}
 			</Card>
 		</div>
 	);
