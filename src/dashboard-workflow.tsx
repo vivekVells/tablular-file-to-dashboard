@@ -6,7 +6,7 @@ import DraftInitialPage from './draft-initial-page';
 
 // todo: have to move few state mgmt related stuffs using useContext hook
 
-interface NextPageJSONDataProp {
+interface ReviewJSONDataProp {
 	pageTitle: string;
 	groupings: {
 		groupingBy: string;
@@ -24,8 +24,8 @@ const DashboardWorkflow: FC = () => {
 		setjsonData(data);
 	};
 
-	const finalJsonDataCallBkFn = (data: NextPageJSONDataProp) => {
-		console.log(`finalJsonDataCallBkFn received: ${JSON.stringify(data)}`);
+	const reviewJsonDataCallBkFn = (data: ReviewJSONDataProp) => {
+		console.log(`reviewJsonDataCallBkFn received: ${JSON.stringify(data)}`);
 	};
 
 	return (
@@ -42,7 +42,7 @@ const DashboardWorkflow: FC = () => {
 				{jsonData.length > 1 && (
 					<DraftInitialPage
 						jsonData={jsonData}
-						finalJsonDataCallBkFn={finalJsonDataCallBkFn}
+						reviewJsonDataCallBkFn={reviewJsonDataCallBkFn}
 					/>
 				)}
 			</div>
